@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="result-title">Classification Result</h1>
+        <div class="result-card">
+            <div class="result-info">
+                <p class="model-name">Model used: <strong>{{ model_name }}</strong></p>
+                <p class="class-name">The image is classified as: <strong id="className">{{ class_name }}</strong></p>
+                <div class="confidence-bar-container">
+                    <div id="confidenceBar" class="confidence-bar" style="width: 0%;">
+                        <span class="confidence-text">Confidence: <strong id="confidenceValue">{{ "%.2f"|format(confidence*100) }}%</strong></span>
+                    </div>
+                </div>
+            </div>
+            <button id="revealButton" class="reveal-button">Reveal Image</button>
+            <div id="imageContainer" class="image-container" style="display: none;">
+                <img src="{{ url_for('main.serve_image', filename=filename) }}" alt="Uploaded Image" class="result-image">
+            </div>
+        </div>
+        <a href="{{ url_for('main.index') }}" class="back-button">Classify Another Image</a>
+        <a href="{{ url_for('main.history') }}" class="history-button">View Classification History</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const revealButton = document.getElementById('revealButton');
+            const imageContainer = document.getElementById('imageContainer');
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const className = document.getElementById('className');
+
+            revealButton.addEventListener('click', function() {
+                imageContainer.style.display = 'block';
+                anime({
+                    targets: imageContainer,
+                    opacity: [0, 1],
+                    scale: [0.9, 1],
+                    duration: 1000,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+                this.style.display = 'none';
+            });
+
+            anime({
+                targets: '.result-card',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                duration: 1000,
+                easing: 'easeOutQuad'
+            });
+
+            const confidence = parseFloat(confidenceValue.textContent);
+            let confidenceClass = 'confidence-low';
+            if (confidence > 70) {
+                confidenceClass = 'confidence-high';
+            } else if (confidence > 40) {
+                confidenceClass = 'confidence-medium';
+            }
+            confidenceBar.classList.add(confidenceClass);
+
+            anime({
+                targets: '.confidence-bar',
+                width: confidenceValue.textContent,
+                duration: 1500,
+                easing: 'easeInOutQuart',
+                delay: 500,
+                complete: function() {
+                    confidenceBar.classList.add('explode');
+                }
+            });
+
+            anime({
+                targets: [className, confidenceValue],
+                opacity: [0, 1],
+                translateY: [20, 0],
+                duration: 1000,
+                delay: anime.stagger(200, {start: 300}),
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>

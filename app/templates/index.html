@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="result-title">Image Classifier</h1>
+        <div class="result-card">
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="image/*" required id="fileInput" style="display: none;">
+                <label for="fileInput" class="file-input-label">Choose an image</label>
+                <select name="model" class="model-select">
+                    <option value="resnet50">ResNet50</option>
+                    <option value="vgg16">VGG16</option>
+                    <option value="inception_v3">Inception V3</option>
+                </select>
+                <button type="submit" class="classify-button">Classify Image</button>
+            </form>
+        </div>
+        <a href="{{ url_for('main.history') }}" class="history-button">View Classification History</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const fileLabel = document.querySelector('.file-input-label');
+
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileLabel.textContent = this.files[0].name;
+                }
+            });
+
+            anime({
+                targets: '.result-card',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                duration: 1000,
+                easing: 'easeOutQuad'
+            });
+        });
+    </script>
+</body>
+</html>
