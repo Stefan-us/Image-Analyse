@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="result-title">Classification History</h1>
+        <div class="result-card">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Class</th>
+                        <th>Confidence</th>
+                        <th>Model</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for classification in classifications %}
+                    <tr>
+                        <td>{{ classification.filename }}</td>
+                        <td>{{ classification.class_name }}</td>
+                        <td>{{ "%.2f"|format(classification.confidence*100) }}%</td>
+                        <td>{{ classification.model_name }}</td>
+                        <td>{{ classification.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ url_for('main.index') }}" class="back-button">Back to Classifier</a>
+    </div>
+</body>
+</html>
